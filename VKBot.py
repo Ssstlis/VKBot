@@ -17,6 +17,7 @@ to = 0
 app = '5679286'
 dev = 'VKbot 0.1 by Ssstlis'
 commands = []
+res = []
 log = 'vkbotlog' + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') + '.log'
 log_path = 'logs'
 adr = 'https://www.google.ru'
@@ -219,6 +220,7 @@ else:
 tok = open('token.txt', 'r')
 token = tok.read()
 tok.close()
+
 tok = open('tasks.txt', 'r')
 ln = tok.read()
 lm = ''
@@ -229,6 +231,19 @@ for line in ln:
     else:
         commands.append(lm)
         lm = ''
+tok.close()
+
+tok = open('results.txt', 'r')
+ln = tok.read()
+lm = ''
+
+for line in ln:
+    if line != '\n':
+        lm += line
+    else:
+        res.append(lm)
+        lm = ''
+tok.close()
 
 session = vk.Session(
     access_token=token)
@@ -303,11 +318,11 @@ while (True):
                         if api.messages.getById(message_ids=m[1])[1].get('chat_id'):
                             to = api.messages.getById(message_ids=m[1])[1].get('chat_id')
 
-                        if comand == 'help':
-                            send(to, user_id, ' Пока что здесь ничего нет...')
+                        if comand == commands[0]:
+                            send(to, user_id, ' ' + res[0])
                             continue
 
-                        if comand == 'weather':
+                        if comand == commands[1]:
                             wt = api.messages.getById(message_ids=m[1])[1].get('body')
                             wt = mbody(wt.replace('.', ''))
                             if wt.find(' ') > 1:
@@ -316,11 +331,11 @@ while (True):
                                 send(to, user_id, getweather(wt))
                                 continue
 
-                        if comand == 'dn':
-                            send(to, user_id, ' Dragon Nest такой Dragon Nest...')
+                        if comand == commands[2]:
+                            send(to, user_id, ' ' + res[2])
                             continue
 
-                        if comand == 'фото':
+                        if comand == commands[3]:
                             wt = api.messages.getById(message_ids=m[1])[1].get('body')
                             wt = mbody(wt.replace('.', ''))
                             if wt.find(' ') > 1:
@@ -329,11 +344,11 @@ while (True):
                                 SearchGoogleImages(to, user_id, wt, 3)
                                 continue
 
-                        if comand == 'кто':
+                        if comand == commands[4]:
                             wt = strtolist(api.messages.getById(message_ids=m[1])[1].get('chat_active'))
                             wt = wt[random.randint(0, len(wt) - 1)]
                             sr = api.users.get(uid=wt)[0]
-                            sendf(to, user_id, ' Я думаю, это ' + sr['first_name'] + ' ' + sr['last_name'], m[1])
+                            sendf(to, user_id, ' ' + res[4] + sr['first_name'] + ' ' + sr['last_name'], m[1])
                         print('\n')
                         time.sleep(1)
                 except:
